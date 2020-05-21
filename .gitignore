@@ -3,3 +3,4 @@ obj
 .DS_Store
 appsettings.json
 *.db
+/.vs/Reactivities/v16/Server/sqlite3
