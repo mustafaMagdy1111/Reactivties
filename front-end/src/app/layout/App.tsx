@@ -4,43 +4,72 @@ import '../layout/styles.css';
 import axios from 'axios';
 import {IActivity} from './../models/activity';
 import {NavBar} from './../features/nav/NavBar';
-import {ActivityDashboard} from '../features/activities/Dashboard/ActivityDashboard';
-
+import ActivityDashboard from '../features/activities/Dashboard/ActivityDashboard';
 const App = () => {
-    const [activities,
-        SetActivities] = useState < IActivity[] > ([]);
-
-    const [SelectedActivity,
-        setSelectedActivity] = useState < IActivity | null > (null);
-
-    const handleSelectActivity = (id : string) => {
-        debugger
-        setSelectedActivity(activities.filter(a => a.id == id)[0])
+    const [activities, setActivities] = useState<IActivity[]>([]);
+    const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(
+      null
+    );
+    const [editMode, setEditMode] = useState(false);
+  
+    const handleOpenCreateForm = () => {
+      setSelectedActivity(null);
+      setEditMode(true);
     }
-
+  
+    const handleCreateActivity = (activity: IActivity) => {
+      setActivities([...activities, activity]);
+      setSelectedActivity(activity);
+      setEditMode(false);
+    }
+  
+    const handleEditActivity = (activity: IActivity) => {
+      setActivities([...activities.filter(a => a.id !== activity.id), activity])
+      setSelectedActivity(activity);
+      setEditMode(false);
+    }
+  
+    const handleDeleteActivity = (id: string) => {
+      setActivities([...activities.filter(a => a.id !== id)])
+    }
+  
+    const handleSelectActivity = (id: string) => {
+      setSelectedActivity(activities.filter(a => a.id === id)[0]);
+      setEditMode(false);
+    };
+  
     useEffect(() => {
-        axios.get < IActivity[] > ('http://localhost:5000/api/Activities').then(response => {
-            SetActivities(response.data)
+      axios
+        .get<IActivity[]>('http://localhost:5000/api/activities')
+        .then(response => {
+          let activities: IActivity[] = [];
+          response.data.forEach(activity => {
+            activity.date = activity.date.split('.')[0]
+            activities.push(activity);
+          })
+          setActivities(activities);
         });
     }, []);
-
+  
     return (
-        <Fragment>
-            <NavBar/>
-
-            <Container style={{
-                marginTop: '7em'
-            }}>
-                <ActivityDashboard
-                    activities={activities}
-                    selectActivity={handleSelectActivity}
-                    selectedActivity={SelectedActivity!}
-                    
-                    />
-            </Container>
-
-        </Fragment>
+      <Fragment>
+        <NavBar openCreateForm={handleOpenCreateForm} />
+        <Container style={{ marginTop: '7em' }}>
+          <ActivityDashboard
+            activities={activities}
+            selectActivity={handleSelectActivity}
+            selectedActivity={selectedActivity}
+            editMode={editMode}
+            setEditMode={setEditMode}
+            setSelectedActivity={setSelectedActivity}
+            createActivity={handleCreateActivity}
+            editActivity={handleEditActivity}
+            deleteActivity={handleDeleteActivity}
+          />
+        </Container>
+      </Fragment>
     );
-};
-
-export default App;
+  };
+  
+  export default App;
+  
