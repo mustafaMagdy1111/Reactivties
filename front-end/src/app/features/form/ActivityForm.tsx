@@ -71,6 +71,9 @@ const ActivityForm : React.FC < RouteComponentProps < DetailParam >> = ({match, 
     };
 
     return (
+
+
+        
         <Segment clearing>
             <Form onSubmit={handleSubmit}>
                 <Form.Input

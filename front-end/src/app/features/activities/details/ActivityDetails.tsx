@@ -1,51 +1,44 @@
 import React, {useContext, useEffect} from 'react';
-import {Card, Button} from 'semantic-ui-react';
+import {Card, Button, Grid, GridColumn} from 'semantic-ui-react';
 import ActivityStore from '../../../api/stores/ActivityStore';
 import {observer} from 'mobx-react-lite';
 import {RouteComponentProps, Link} from 'react-router-dom';
 import LoadingComponent from './../../../layout/LoadingComponent';
+import ActivityDetailedInfo from './ActivityDetailedInfo';
+import ActivityDetailedChat from './ActivityDetailedChat';
+import ActivityDetailedSidebar from './ActivityDetailedSidebar';
+import ActivityDetailedHeader from './ActivityDetailedHeader';
 
-interface DetailParam {
-    id : string
-}
-
-const ActivityDetails : React.FC < RouteComponentProps < DetailParam >> = ({match, history}) => {
+interface DetailParams {
+    id: string;
+  }
+  
+  const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
+    match
+  }) => {
     const activityStore = useContext(ActivityStore);
-    const {selectedActivity: activity, loadActivity, loadingIntiial} = activityStore;
-
+    const { selectedActivity, loadActivity, loadingIntiial } = activityStore;
+  
     useEffect(() => {
-        loadActivity(match.params.id)
-    }, [loadActivity, match.params.id])
-
-    if (loadingIntiial || !activity) 
-        return <LoadingComponent content='loading Activity....'/>
-
+      loadActivity(match.params.id);
+    }, [loadActivity, match.params.id]);
+  
+    if (loadingIntiial || !selectedActivity)
+      return <LoadingComponent content='Loading activity...' />;
+  
     return (
-        <Card fluid>
-            {/* <Image src={`.//categoryImages/${activity.category}.jpg`} wrapped ui={false} /> */}
-            <Card.Content>
-                <Card.Header>{activity !.title}</Card.Header>
-                <Card.Meta>
-                    <span>{activity !.date}</span>
-                </Card.Meta>
-                <Card.Description>
-                    {activity !.description}
-                </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-                <Button.Group widths={2}>
-                    <Button
-                        as
-                        ={Link}
-                        to={`/manage/${activity.id}`}
-                        basic
-                        color='blue'
-                        content='Edit'/>
-                    <Button onClick={() => history.goBack()} basic color='grey' content='Cancel'/>
-                </Button.Group>
-            </Card.Content>
-        </Card>
+      <Grid>
+        <Grid.Column width={10}>
+          <ActivityDetailedHeader activity={selectedActivity} />
+          <ActivityDetailedInfo activity={selectedActivity} />
+          <ActivityDetailedChat />
+        </Grid.Column>
+        <Grid.Column width={6}>
+          <ActivityDetailedSidebar />
+        </Grid.Column>
+      </Grid>
     );
-};
-
-export default observer(ActivityDetails);
+  };
+  
+  export default observer(ActivityDetails);
+  
