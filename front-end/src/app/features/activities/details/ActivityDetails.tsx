@@ -9,36 +9,69 @@ import ActivityDetailedChat from './ActivityDetailedChat';
 import ActivityDetailedSidebar from './ActivityDetailedSidebar';
 import ActivityDetailedHeader from './ActivityDetailedHeader';
 
+// interface DetailParams {
+//     id: string;
+//   }
+  
+//   const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
+//     match
+//   }) => {
+//     const activityStore = useContext(ActivityStore);
+//     const { selectedActivity, loadActivity, loadingIntiial } = activityStore;
+  
+//     useEffect(() => {
+//       loadActivity(match.params.id);
+//     }, [loadActivity, match.params.id]);
+  
+//     if (loadingIntiial || !selectedActivity)
+//       return <LoadingComponent content='Loading activity...' />;
+  
+//     return (
+//       <Grid>
+//         <Grid.Column width={10}>
+//           <ActivityDetailedHeader activity={selectedActivity} />
+//           <ActivityDetailedInfo activity={selectedActivity} />
+//           <ActivityDetailedChat />
+//         </Grid.Column>
+//         <Grid.Column width={6}>
+//           <ActivityDetailedSidebar />
+//         </Grid.Column>
+//       </Grid>
+//     );
+//   };
+  
+//   export default observer(ActivityDetails);
 interface DetailParams {
-    id: string;
-  }
-  
-  const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
-    match
-  }) => {
-    const activityStore = useContext(ActivityStore);
-    const { selectedActivity, loadActivity, loadingIntiial } = activityStore;
-  
-    useEffect(() => {
-      loadActivity(match.params.id);
-    }, [loadActivity, match.params.id]);
-  
-    if (loadingIntiial || !selectedActivity)
-      return <LoadingComponent content='Loading activity...' />;
-  
-    return (
-      <Grid>
-        <Grid.Column width={10}>
-          <ActivityDetailedHeader activity={selectedActivity} />
-          <ActivityDetailedInfo activity={selectedActivity} />
-          <ActivityDetailedChat />
-        </Grid.Column>
-        <Grid.Column width={6}>
-          <ActivityDetailedSidebar />
-        </Grid.Column>
-      </Grid>
-    );
-  };
-  
-  export default observer(ActivityDetails);
-  
+  id: string;
+}
+
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({
+  match,
+  history
+}) => {
+  const activityStore = useContext(ActivityStore);
+   const { selectedActivity, loadActivity, loadingIntiial } = activityStore;
+
+  useEffect(() => {
+    loadActivity(match.params.id);
+  }, [loadActivity, match.params.id, history]);
+
+  if (loadingIntiial) return <LoadingComponent content='Loading activity...' />;
+
+  if (!selectedActivity) return <h2>Activity not found</h2>;
+
+  return (
+    <Grid>
+      <Grid.Column width={10}>
+        <ActivityDetailedHeader activity={selectedActivity} />
+        <ActivityDetailedInfo activity={selectedActivity} />
+        <ActivityDetailedChat />
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <ActivityDetailedSidebar />
+      </Grid.Column>
+    </Grid>
+  );
+};
+
+export default observer(ActivityDetails);
